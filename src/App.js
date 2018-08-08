@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 // importing * as BooksAPI from './BooksAPI'
 import * as BooksAPI from './BooksAPI';
 import './App.css'
+import { Route } from 'react-router-dom';
+import SearchBooks from './SearchBooks';
+import ListBooks from './ListBooks';
+import WaitingScreen from './WaitingScreen';
 
 class BooksApp extends Component {
   state = {

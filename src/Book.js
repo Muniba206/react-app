@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import SelectCategory from './SelectCategory';
-import { ModalCustomStyles } from ./ModalCustomStyles';
+import { ModalCustomStyles } from './ModalCustomStyles';
 import Truncate from 'react-truncate';
 import ReactStars from 'react-stars';
 
