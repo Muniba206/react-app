@@ -1,61 +1,37 @@
-import React, { Component } from 'react';
-import Book from './Book';
-import PropTypes from  'prop-types';
-import sortBy from 'sort-by';
-import WaitingScreen from './WaitingScreen';
-
-/** BookShelf renders BookShelfs and their categories. Imports books and renders components **/
+import React, {Component} from 'react'
+import Book from './Book'
+import {PropTypes} from 'prop-types'
 
 class BookShelf extends Component {
-	static propTypes = {
-		title: PropTypes.string.isRequired,
-		books: PropTypes.array.isRequired ,
-		onChangeCategory: PropTypes.func.isRequired
-	}
-	
-	state= {
-		loading: false
-	}
-	
-	changeCategory = (id, category) => {
-		this.setState({ loading: true });
-		this.props.onChangeCategory(id, category);
-	}
-	
-	componentWillReceiveProps() {
-		this.setState ({ loading: false });
-	}
-	
-	render () {
-		const { title, books } = this.props;
-		const { loading } = this.state;
-		
-		if (loading) return <WaitingScreen text='Updating bookshelves...' />;
 
-    let bookshelves = books
-      .sort(sortBy('title'))
-      .map(book => (
-        <li key={book.id}>
-          <Book {...book} onChangeCategory={this.changeCategory} />
-        </li>
-      ));
+  static propTypes = {
+    books: PropTypes.array.isRequired,
+    title: PropTypes.string.isRequired,
+    onChangeShelf: PropTypes.func.isRequired
+  }
 
-    let bookshelfCount = bookshelves.length;
+  update_book = (book, shelf) => {
+    this.props.onChangeShelf(book, shelf)
+  }
+  render() {
+
+    const books = this.props.books
 
     return (
-      <div className='bookshelf'>
-        <h2 className='bookshelf-title'>
-          {title} <span className='bookshelf-count'>({bookshelfCount})</span>
-        </h2>
-        {bookshelfCount === 0 && (
-          <p>There is no book in this bookshelf.</p>
-        )}
-        <div className='bookshelf-books'>
-          {bookshelfCount > 0 && (
-            <ol className='books-grid'>
-              {bookshelves}
-            </ol>
-          )}
+      <div className="bookshelf">
+        <h2 className="bookshelf-title">{this.props.title}</h2>
+        <div className="bookshelf-books">
+          <ol className="books-grid">
+            {books.map((book, index) => (
+                <Book 
+                    book={book}
+                    key={index}
+                    onUpdate={(shelf) => {
+                        this.update_book(book, shelf)
+                    }
+                }/>
+            ))}
+          </ol>
         </div>
       </div>
     )

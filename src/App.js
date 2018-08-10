@@ -1,59 +1,44 @@
-import React, { Component } from 'react';
-// importing * as BooksAPI from './BooksAPI'
-import * as BooksAPI from './BooksAPI';
+import React from 'react'
+import { Route } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
 import './App.css'
-import { Route } from 'react-router-dom';
-import SearchBooks from './SearchBooks';
-import ListBooks from './ListBooks';
-import WaitingScreen from './WaitingScreen';
+import BooksList from './ListBooks'
+import SearchBooks from './SearchBooks'
 
-class BooksApp extends Component {
+class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-	 books: [],
-	 loading: false
+    books: []
   }
+
   componentDidMount() {
-    this.setState({ loading: true});
-
-    BooksAPI.getAll()
-      .then((books) => {
-        this.setState({ books, loading: false })
-      })
+    this.get_books_details()
   }
 
-  changeCategory = (id, category) => {
-    BooksAPI.get(id).then(data => {
-      let updatedBook = data;
-      updatedBook.shelf = category;
+  get_books_details = () => {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ books })
+    })
+  }
 
-      this.setState((state) => ({
-        books: state.books.filter(book => book.id !== id).concat([ updatedBook ])
-      }))
-    });
-
-    BooksAPI.update({ id }, category);
+  update_book_details = (book, shelf) => {
+    BooksAPI.update(book, shelf).then(() => {
+      this.get_books_details()
+    })
   }
   render() {
-	const { books, loading } = this.state;
-		if (loading) return <WaitingScreen text=' Please wait, while page is loading ...'/>;
     return (
-	<div className='app'>
-        <Route exact path='/' render={() => (
-          <ListBooks
-            books={books}
-            onChangeCategory={this.changeCategory}
-          />
-        )}/>
-        <Route path='/search' render={() => (
+      <div className="app">
+        <Route path='/search' render={({ history }) => (
           <SearchBooks
-            books={books}
-            onChangeCategory={this.changeCategory}
+            onChange={this.update_book_details}
+            myBooks={this.state.books}
+          />
+        )} />
+
+        <Route exact path='/' render={() => (
+          <BooksList
+            books={this.state.books}
+            onChange={this.update_book_details}
           />
         )}/>
       </div>
@@ -61,4 +46,4 @@ class BooksApp extends Component {
   }
 }
 
-export default BooksApp;
+export default BooksApp
